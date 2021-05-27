@@ -3,8 +3,8 @@ enemyBox = document.querySelector("#enemy"),    // 적이 존재하는 박스 �
 score = document.querySelector("#jsMyScore"),   // 스코어 선택
 chackAnemy = document.querySelector(".enemysAmy"),
 map = document.querySelector("#contantBox"),
-SelectDifficulty = document.querySelectorAll("#difficultyBox button"),
-set = document.querySelector("#set");
+mapMove = document.querySelector("#map"), // 맵 선택
+set = document.querySelector("#set");   // hp/damege 택스트
 
 let difficulty = "5",   // 난이도 설정 1로 갈수록 어려워짐
     level = "1",       // 레벨 스테이지 클리어시 높아짐
@@ -53,8 +53,6 @@ function handleKeyDown(event)   {
             KEY_DOWN = `${KEY_DOWN}d`
         };
     }
-    moveEvent();    // 저장한 함수를 가지고 function 실행
-
     if(keyName === "z") {   // 어택 이벤트
         // 이 부분에 적으면 꾹 누르면 연사가 가능하나 방향키 조작시 끊김
     }
@@ -84,27 +82,89 @@ function handleKeyUp(event) {   // 키가 업 떨어졌을때
                 clearInterval(playAlert);   // 0.1초 실행 함수 off
             }
         }
-        moveEvent();    // 키 다운 함수를 다시 실행
 }
-
-function moveEvent()    {   // 이동 이벤트
-    if(KEY_DOWN.includes('w')){ // w 가 눌렸을때
-        myCrtTop = myCrtTop - 10 ;  // 현재 값에 -10을 줌
-        myCrt.style.top = `${myCrtTop}px`;  // -10값을 현재 top값에 px로 적용
+map.addEventListener("click",function(event){   // 모바일 최적화 화면 클릭시 공격 토글
+    if(!attackStart)    {   // 토글 어택버튼 체크
+        attackStart = true; // 토클 on
+        playAlert = setInterval(function(){ // 0.1초마다 어택 실행
+            attack()
+        },100)
+    } else  {   // 토글버튼이 아닐때
+        attackStart = false;    // 토글 off
+        clearInterval(playAlert);   // 0.1초 실행 함수 off
     }
-    if(KEY_DOWN.includes('s')){
-        myCrtTop = myCrtTop + 10 ;
-        myCrt.style.top = `${myCrtTop}px`;
+})
+
+setInterval(function(){ // 주기적으로 검사
+    if(KEY_DOWN.includes('w')){ // w 가 눌렸을때
+        if(myCrtTop >= 10)  {   // top 값이 container를 넘지 않도록
+            myCrtTop = myCrtTop - 4 ;  // 현재 값에 -10을 줌
+            myCrt.style.top = `${myCrtTop}px`;  // -10값을 현재 top값에 px로 적용
+        }else   {
+            return false;
+        }
+    }
+    if(KEY_DOWN.includes('s')){ // w키가 눌렸을때의 위 주석과 똑같음
+        if(myCrtTop <= map.offsetHeight-(map.offsetHeight/17))  {
+            myCrtTop = myCrtTop + 4 ;
+            myCrt.style.top = `${myCrtTop}px`;
+        }else   {
+            return false;
+        }
     }
     if(KEY_DOWN.includes('a')){
-        myCrtLeft = myCrtLeft - 10 ;
-        myCrt.style.left = `${myCrtLeft}px`;
+        if(myCrtLeft >= 10)  {
+            myCrtLeft = myCrtLeft - 4 ;
+            myCrt.style.left = `${myCrtLeft}px`;
+        }else   {
+            return false;
+        }
     }
     if(KEY_DOWN.includes('d')){
-        myCrtLeft = myCrtLeft + 10 ;
-        myCrt.style.left = `${myCrtLeft}px`;
+        if(myCrtLeft <= map.clientWidth-(map.clientWidth/8))  {
+            myCrtLeft = myCrtLeft + 4 ;
+            myCrt.style.left = `${myCrtLeft}px`;
+        }else   {
+            return false;
+        }
     }
-}
+}, 10); // 매 0.01 초마다 실행
+
+
+/*function moveEvent()    {   // 구버전 이동 이벤트 너무 끊김...ㅠ
+    if(KEY_DOWN.includes('w')){ // w 가 눌렸을때
+        if(myCrtTop >= 10)  {   // top 값이 container를 넘지 않도록
+            myCrtTop = myCrtTop - 10 ;  // 현재 값에 -10을 줌
+            myCrt.style.top = `${myCrtTop}px`;  // -10값을 현재 top값에 px로 적용
+        }else   {
+            return false;
+        }
+    }
+    if(KEY_DOWN.includes('s')){ // w키가 눌렸을때의 위 주석과 똑같음
+        if(myCrtTop <= map.offsetHeight-(map.offsetHeight/17))  {
+            myCrtTop = myCrtTop + 10 ;
+            myCrt.style.top = `${myCrtTop}px`;
+        }else   {
+            return false;
+        }
+    }
+    if(KEY_DOWN.includes('a')){
+        if(myCrtLeft >= 10)  {
+            myCrtLeft = myCrtLeft - 10 ;
+            myCrt.style.left = `${myCrtLeft}px`;
+        }else   {
+            return false;
+        }
+    }
+    if(KEY_DOWN.includes('d')){
+        if(myCrtLeft <= map.clientWidth-(map.clientWidth/8))  {
+            myCrtLeft = myCrtLeft + 10 ;
+            myCrt.style.left = `${myCrtLeft}px`;
+        }else   {
+            return false;
+        }
+    }
+}*/
 
 function attack()   {   // 공격 이벤트
 const    attackBox = document.querySelector("#attackBox"),  // document의 공격들의 box
@@ -164,18 +224,17 @@ function addEnemys(x,y)   {    // 적 생성
     
     enemysMove(x,y);    // 적의 위치 생성
     
-    function enemysMove(x,y)   {
+    function enemysMove(x,y)   {    // 적의 움직임 제어값을 받는 함수
         enemysAmy.style.top = `${x}px`  // 적의 생성 top 값
         enemysAmy.style.left = `${y}px` // 적의 생성 left 값
 
-        if(Number(enemysAmy.id) <= 6) {  // 몬스터 행동 이벤트 1~5번 까지는 
-            enemyMoveLeft(enemysAmy)
+        if(Number(enemysAmy.id) <= 150) {  // 생성되는 몬스터 id ~몇번까지는 밑의 이벤트를 하라
+            enemyMoveLeft(enemysAmy)   
         }
     }
 }
 
 function enemyStatusChack(length)  {    // 적 스테이터스 체크
-    console.log(Myscore);
     Myscore = Myscore + 10; // 스코어 점수 추가
 
     const enmId = length.id;    // 적의 식별 넘버
@@ -194,11 +253,11 @@ function enemyStatusChack(length)  {    // 적 스테이터스 체크
 
 function enemyMoveLeft(enemysAmy)    {  // 몹이 왼쪽에서 생성되면
 
-    for(var left=0; left<20; left++){   // 몹을 왼쪽으로 이동
+    for(let left=0; left<Math.random() * (120 - 20) + 20; left++){   // 몹을 왼쪽으로 이동
         (x => {
           setTimeout(() => {    // for 문으로 인해 left번 까지 75초마다 실행
             let leftMove = enemysAmy.offsetLeft - 10;   // 10px씩 이동
-            enemysAmy.style.left = `${leftMove}px`
+            enemysAmy.style.left = `${leftMove}px`  // 위의 내용
           },75*left)
         })(left)
       }
@@ -210,51 +269,96 @@ function enemyMoveRight()    {  // 몹이 오른쪽에서 생성될때
     
 }
 
-function enemyMoveTop(enemysAmy)    {   // 아래로 이동
+function enemyMoveTop(enemysAmy)    {   // 적이 아래로 이동
+    let minMove = level/difficulty*10;  // 적의 이동 값
     console.log("실행");    
     setInterval((event) => {    // 75초 마다 실행
-        let topMove = enemysAmy.offsetTop + 10; // 10px씩 이동
-            enemysAmy.style.top = `${topMove}px`
+        let topMove = enemysAmy.offsetTop + minMove; // 레벨/어려움*20px씩 이동
+            enemysAmy.style.top = `${topMove}px`    // 위의 내용
 
         if(topMove >= map.clientHeight) {   // 몹의 top 위치가 맵의 height 크기에 맞으면
             enemysAmy.remove();     // 몬스터 삭제
             return false;
         }
-    }, 75);
+    }, 20);
 }
 
-function start()    {
-    setTimeout(() => {  // 첫번째 몹
-        setTimeout(() => {
-            addEnemys(130,730); 
-            addEnemys(100,690); 
-            addEnemys(70,640); 
-        }, 1000);
-    
-        setTimeout(() => {  // 두번째 몹
-            addEnemys(130,730); 
-            addEnemys(100,690); 
-        }, 5000);
+function chack()  { // 난이도 설정
+    let levelHpAmy = level / difficulty  * 15,  // 난이도에 맞춰 적의 피를 설정
+        attackPower = parseInt(difficulty / level);   // 난이도에 맞춰 공격력 설정
+        if(attackPower === 0)   {   // 만약 데미지가 0이면
+            attackPower = 1;    // 최소 데미지 1로 설정
+        }
 
-
-        setTimeout(() => {  // 두번째 몹
-            addEnemys(130,730); 
-            addEnemys(100,690); 
-        }, 14000);
-    }, 1000);
-}
-
-function chack()  {
-    let levelHpAmy = level / difficulty  * 15,
-        attackPower = difficulty / level;
-    set.innerText = `적 hp:${levelHpAmy}/내 공격력:${attackPower}`;
+    set.innerText = `적 hp:${levelHpAmy}/내 공격력:${attackPower}`; // 현재 설정 표시
 }
 
 function handleDifficulty(name) {
-    difficulty = name;
+    difficulty = name;  // 현재 선택한 난이도
+    chack();    // 선택한 난이도를 설정단으로 보냄
+    const startbn = document.querySelector("#startBtnBox"); // 시작 버튼 선택
+    startbn.style.display = "block";    // 시작버튼 보이게
+}
 
-    start();
-    chack();
+function start()    {
+    const mapLeft = map.offsetLeft - 60, // 맵의 왼쪽 부분
+          mapRight = map.offsetLeft + 180;
+    setTimeout(() => { // 게임 시작
+        setTimeout(() => {  // 첫번째 웨이브
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapRight - mapLeft) + mapLeft); // math.random() * (최대값 - 최소값) + 최소값 ) 최대값과 최소값사이를 랜덤으로
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapRight - mapLeft) + mapLeft);   // addEnemys(top값,left값);
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapRight - mapLeft) + mapLeft); 
+        }, 1000);
+    
+        /*setTimeout(() => {  // 두번째 웨이브
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (780 - 660) + 660); 
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (780 - 660) + 660);
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (780 - 660) + 660); 
+        }, 5000);
+
+
+        setTimeout(() => {  // 세번째 웨이브
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (780 - 660) + 660); 
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (780 - 660) + 660);
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (780 - 660) + 660); 
+        }, 14000);*/
+
+        setTimeout(() => {  // 라운드 클리어
+            levelUp();  // 스테이지 레벨업 함수 실행
+            stopGame(); // 맵 이동 css 중지
+        }, 5000);
+    }, 1000);
+}
+
+function levelUp()  {
+    level = Number(level) + 1;  // 스테이지 클리어 후 스테이지레벨 상승
+    setTimeout(() => {
+        mapMove.style.animation = "mapMove 5s infinite linear" ;     // 스테이지 클리어 후 멈춘 맵 다시 play
+        chack();    // 변경된 레벨에 따른 난이도등 체크
+        if(level > 5) { // 지금은 레벨이 5 넘어가면 게임 클리어로 넘어가지만 추후 레벨마다 start 함수를 다르게줘 스테이지 설정 가능
+            gameClear();    // 게임 클리어 함수
+        } else{
+            start();    // 스타트 함수
+        }
+    }, 1000);
+
+}
+
+function stopGame() {   // 스테이지 클리어 게임 클리어가 아님
+    mapMove.style.animation = "";   // 스테이지 클리어 후 잠시 맵 멈춤
+}
+
+function startBtn()    {    // 스타트 버튼 클릭
+    mapMove.style.animation = "mapMove 5s infinite linear" ;    // 맵을 이동하는 느낌이 하는 CSS
+    start();    // 게임 스타트
+}
+
+function gameClear()    {   // 게임 클리어
+    mapMove.style.animation = "";
+    set.innerText ="게임 클리어!!";
 }
 
 
+//  해야하는것
+//  모바일 최적화 -> 모바일 일때 이동 이벤트
+//  보스 설정 / 스테이지 설정 / 적팀 탄 설정(생성,날아가는것) / 적팀 탄 피격 설정
