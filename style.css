@@ -16,7 +16,6 @@ body    {
     position: absolute;
     left: 0px;
     bottom: 0px;
-    animation: mapMove 10s infinite linear;
 }
 .mapImg {
     width: 100%;
@@ -63,18 +62,71 @@ body    {
 #difficultyBox  {
     position: fixed;
     top: 20px;
-    left: 20px;
+    left: 210px;
+    text-align: center;
 }
 #difficultyBox button   {
-
+    border: none;
+    background: darkgray;
+    padding: 10px 55px;
+    margin: 15px auto;
+    display: block;
+    border-radius: 50px;
+    font-size: 1.7vw;
+    box-shadow: inset 1px 1px 5px dimgrey;
+}
+button  {
+    transition: all 0.3s;
+}
+button:hover {
+    transform: scale(1.05);
+}
+button:active   {
+    transform: scale(0.95);
+}
+#startBtnBox  {
+    position: fixed;
+    top: 550px;
+    left: 245px;
+    display: none;
+}
+#startBtnBox button {
+    background: linear-gradient(45deg, black, transparent);
+    background-repeat: no-repeat;
+    padding: 10px 55px;
+    margin: 15px auto;
+    display: block;
+    border-radius: 50px;
+    font-size: 1.7vw;
+    box-shadow: inset 1px 1px 5px dimgrey;
+    color: white;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+#setHiddenBox   {
+    width: fit-content;
+    margin: 0 auto;
+    font-size: 1.3vw;
+    color: white;
+    overflow: hidden;
+}
+#set    {
+    position: relative;
+    transition: all 1s;
 }
 
 @keyframes mapMove  {
     from {
-        top: -700%;
+        top: -595%;
       }
     
       to {
-        top: -10%;
+        top: -110%;
       }
 }
+
+
+@media screen and (max-width: 768px) {
+    #contantBox {
+        width:100%;
+    }
+  }
