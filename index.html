@@ -29,7 +29,23 @@
         <button class="difficulty" name="3" onclick="handleDifficulty(name)">nomal</button>
         <button class="difficulty" name="2" onclick="handleDifficulty(name)">hard</button>
         <button class="difficulty" name="1" onclick="handleDifficulty(name)">very hard</button>
-        <span id="set"></span>
+        <div id="setHiddenBox">
+            <span id="set"></span>
+        </div>
+    </div>
+    <div id="startBtnBox">
+        <button id="startBtn" onclick="startBtn()">start</button>
+    </div>
+
+    <div>
+        <button id="jsTextBtn">설명문</button>
+        <div id="txtBox">
+            <p>
+                1. 최소 데미지는 1입니다.<br/>
+                2. 최대 데미지 및 적의 최대 hp,스테이지 레벨에는 제한이 없습니다.<br/>
+                3. pc최적화 입니다. (모바일 예정)
+            </p>
+        </div>
     </div>
 
     <script src="set.js"></script>
