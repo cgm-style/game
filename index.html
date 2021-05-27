@@ -9,9 +9,28 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="attackBox"></div>
-    <div id="enemy"></div>
-    <div class="myCharacter" id="jscharacter"></div>
+    <div id="contantBox">
+        <div id="map">
+            <div class="mapImg"></div>
+            <div class="mapImg"></div>
+            <div class="mapImg"></div>
+            <div class="mapImg"></div>
+            <div class="mapImg"></div>
+            <div class="mapImg"></div>
+        </div>
+        <span id="jsMyScore" class="score">Score : 0</span>
+        <div id="attackBox"></div>
+        <div id="enemy"></div>
+        <div class="myCharacter" id="jscharacter"></div>
+    </div>
+    <div id="difficultyBox">
+        <button class="difficulty" name="5" onclick="handleDifficulty(name)">very easy</button>
+        <button class="difficulty" name="4" onclick="handleDifficulty(name)">easy</button>
+        <button class="difficulty" name="3" onclick="handleDifficulty(name)">nomal</button>
+        <button class="difficulty" name="2" onclick="handleDifficulty(name)">hard</button>
+        <button class="difficulty" name="1" onclick="handleDifficulty(name)">very hard</button>
+        <span id="set"></span>
+    </div>
 
     <script src="set.js"></script>
 </body>
