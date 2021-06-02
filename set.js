@@ -1,10 +1,12 @@
 const myCrt =   document.querySelector("#jscharacter"), // 캐릭터 선택
 enemyBox = document.querySelector("#enemy"),    // 적이 존재하는 박스 선택
 score = document.querySelector("#jsMyScore"),   // 스코어 선택
-chackAnemy = document.querySelector(".enemysAmy"),
-map = document.querySelector("#contantBox"),
+chackAnemy = document.querySelector(".enemysAmy"),  // 적 박스
+map = document.querySelector("#contantBox"),    // 맵 박스
 mapMove = document.querySelector("#map"), // 맵 선택
-set = document.querySelector("#set");   // hp/damege 택스트
+set = document.querySelector("#set"),   // hp/damege 택스트
+hp  = document.querySelector("#hp"),    // 나의 hp
+skill = document.querySelector("#skill"); // 남은 스킬 수 
 
 let difficulty = "5",   // 난이도 설정 1로 갈수록 어려워짐
     level = "1",       // 레벨 스테이지 클리어시 높아짐
@@ -14,7 +16,8 @@ let difficulty = "5",   // 난이도 설정 1로 갈수록 어려워짐
     myCrtLeft = myCrt.style.left,   // 캐릭터의 현재 좌우 위치
     attackStart = false,    // 공격 토글 확인
     Myscore = 0,    // 내 스코어 점수
-    enemysLenght = 0;    // 적 숫자 넘버
+    enemysLenght = 0,    // 적 숫자 넘버
+    hitMyCt = false;    // 나의 히트시 무적
 
 myCrtTop = myCrt.offsetTop; //offsetTop 값을 top left에 실제로 주기
 myCrtLeft = myCrt.offsetLeft; //offsetTop 값을 top left에 실제로 주기
@@ -194,11 +197,11 @@ const    attackBox = document.querySelector("#attackBox"),  // document의 공�
             attackLeft = myAttackPoint.offsetLeft-20;   // 공격 미사일의 중앙을 맞추기 위해 -20 한 왼쪽값
 
             const enmTop = length.offsetTop,    // 적의 top값
-                  enmLeft = length.offsetLeft,  // 적의 left값
-                  minenmLeft = enmLeft-25,  // 적의 맨 왼쪽값
-                  maxenmLeft = enmLeft+25,  // 적의 맨 오른쪽값
-                  minenmTop = enmTop-25,    // 적의 맨 윗값
-                  maxenmTop = enmTop+25;    // 적의 맨 아랫값
+                enmLeft = length.offsetLeft,  // 적의 left값
+                minenmLeft = enmLeft-25,  // 적의 맨 왼쪽값
+                maxenmLeft = enmLeft+25,  // 적의 맨 오른쪽값
+                minenmTop = enmTop-25,    // 적의 맨 윗값
+                maxenmTop = enmTop+25;    // 적의 맨 아랫값
             if(attackLeft > minenmLeft && attackLeft < maxenmLeft && attackTop > minenmTop && attackTop < maxenmTop)    {   // 히트 판정 체크 미사일이 적의 맨 왼쪽~ 맨 오른쪽 안이며 맨 위쪽~ 아랫쪽 안이라면
                     myAttackPoint.remove(); // 미사일 삭제
                     enemyStatusChack(length); // 적의 스테이터스 체크 
@@ -206,6 +209,57 @@ const    attackBox = document.querySelector("#attackBox"),  // document의 공�
             }
         }
     }
+}
+
+function anmAttack(enemysAmy)   {   // 적의 공격 이벤트
+    const    attackBox = document.querySelector("#attackBox"),  // document의 공격들의 box
+        anmAttackPoint = document.createElement("div");  // 공격 미사일? 생성 박스
+    
+        anmAttackPoint.className = "enmattactPoint";    // 미사일 클래스
+    
+        attackBox.appendChild(anmAttackPoint);   // 미사일 생성
+    
+        anmAttackPoint.style.top = `${enemysAmy.offsetTop+30}px`;  // 미사일의 top값
+        anmAttackPoint.style.left = `${enemysAmy.offsetLeft+20}px`;    // 미사일의 left 값
+
+        setInterval((event) => {    // 0.1초 마다 실행
+            let flyTop = anmAttackPoint.offsetTop + 10;  // 미사일의 현재 위치에서 -10
+            anmAttackPoint.style.top = `${flyTop}px`;    // 위의 값을 미사일에 적용하여 날아가도록 설정
+            if(flyTop >= map.clientHeight) {   // 미사일이 맨위 벽에 닿으면 삭제
+                anmAttackPoint.remove(); 
+                return false;
+            }
+            myAttackHit(anmAttackPoint);    // 미사일이 날아가며 히트 판정 확인
+        }, 50);
+    
+        function myAttackHit(anmAttackPoint)    {   // 미사일 히트 판정
+            const enemysAttk = document.querySelectorAll(".enmattactPoint"); // 적 미사일을 선택
+    
+            for(let length  of enemysAttk) {    // 적 미사일의 수 만큼 대조하여 체크
+                let enmattackTop = length.offsetTop,    // 적 미사일의 top값
+                enmattackLeft = length.offsetLeft-20;   // 적 미사일의 중앙을 맞추기 위해 -20 한 왼쪽값
+                
+                const myctTop = myCrt.offsetTop,    // 캐릭터의 top값
+                  myctLeft = myCrt.offsetLeft,  // 캐릭터의 left값
+                  minmyctLeft = myctLeft-15,  // 캐릭터 왼쪽값
+                  maxmyctLeft = myctLeft+15,  // 캐릭터 오른쪽값
+                  minmyctTop = myctTop-15,    // 캐릭터 윗값
+                  maxmyctTop = myctTop+15;    // 캐릭터 아랫값
+
+                if(enmattackLeft > minmyctLeft && enmattackLeft < maxmyctLeft && enmattackTop > minmyctTop && enmattackTop < maxmyctTop)    {   // 히트 판정 체크 미사일이 적의 맨 왼쪽~ 맨 오른쪽 안이며 맨 위쪽~ 아랫쪽 안이라면
+                        anmAttackPoint.remove(); // 미사일 삭제
+                        if(hitMyCt === false)   {   // 첫 히트시 판정
+                            myStatusChack(); // 나의 스테이터스 체크 
+                            hitMyCt = true;
+                        } else  {   // 히트 후 1초간 무적
+                            setTimeout(() => {
+                                hitMyCt = false;
+                            }, 1000);
+                        }
+                        return false;
+                }
+            }
+        }
 }
 
 function addEnemys(x,y)   {    // 적 생성
@@ -228,11 +282,28 @@ function addEnemys(x,y)   {    // 적 생성
         enemysAmy.style.top = `${x}px`  // 적의 생성 top 값
         enemysAmy.style.left = `${y}px` // 적의 생성 left 값
 
-        if(Number(enemysAmy.id) <= 150) {  // 생성되는 몬스터 id ~몇번까지는 밑의 이벤트를 하라
+        if(Number(enemysAmy.id) < 15) {  // 생성되는 몬스터 id ~몇번까지는 밑의 이벤트를 하라
             enemyMoveLeft(enemysAmy)   
         }
     }
 }
+
+function enemyStatusChack()  {    // 나의 스테이터스 체크
+
+    const enmId = length.id;    // 적의 식별 넘버
+    let enmHp = enemyState[enmId].hp,  // 적의 hp 체크
+        attackPower = difficulty / level; // 어택 미사일 데미지 체크 (수정필요)
+
+    enemyState[enmId].hp = enmHp - attackPower;  // 적의 hp 하락
+    // console.log(enemyState[enmId].hp);  현재 적 hp 콘솔 체크
+
+    if (enemyState[enmId].hp <= 0) {   // 만약 적의 hp가 0이 된다면
+        length.remove(); //  적을 삭제
+        Myscore = Myscore + 100;    // 적을 잡으면 점수 추가
+    }
+    score.innerText = `Score : ${Myscore}`  // 스코어 점수 표시
+}
+
 
 function enemyStatusChack(length)  {    // 적 스테이터스 체크
     Myscore = Myscore + 10; // 스코어 점수 추가
@@ -255,10 +326,10 @@ function enemyMoveLeft(enemysAmy)    {  // 몹이 왼쪽에서 생성되면
 
     for(let left=0; left<Math.random() * (120 - 20) + 20; left++){   // 몹을 왼쪽으로 이동
         (x => {
-          setTimeout(() => {    // for 문으로 인해 left번 까지 75초마다 실행
+          setTimeout(() => {    // for 문으로 인해 left번 까지 20초마다 실행
             let leftMove = enemysAmy.offsetLeft - 10;   // 10px씩 이동
             enemysAmy.style.left = `${leftMove}px`  // 위의 내용
-          },75*left)
+          },50*left)
         })(left)
       }
     
@@ -272,7 +343,7 @@ function enemyMoveRight()    {  // 몹이 오른쪽에서 생성될때
 function enemyMoveTop(enemysAmy)    {   // 적이 아래로 이동
     let minMove = level/difficulty*10;  // 적의 이동 값
     console.log("실행");    
-    setInterval((event) => {    // 75초 마다 실행
+    setInterval((event) => {    // 20초 마다 실행
         let topMove = enemysAmy.offsetTop + minMove; // 레벨/어려움*20px씩 이동
             enemysAmy.style.top = `${topMove}px`    // 위의 내용
 
@@ -281,6 +352,9 @@ function enemyMoveTop(enemysAmy)    {   // 적이 아래로 이동
             return false;
         }
     }, 20);
+    setTimeout(() => {  // 노멀 어택
+            anmAttack(enemysAmy);
+    }, 1000);
 }
 
 function chack()  { // 난이도 설정
@@ -299,14 +373,17 @@ function handleDifficulty(name) {
     const startbn = document.querySelector("#startBtnBox"); // 시작 버튼 선택
     startbn.style.display = "block";    // 시작버튼 보이게
 }
-
+console.dir(map);
 function start()    {
-    const mapLeft = map.offsetLeft - 60, // 맵의 왼쪽 부분
-          mapRight = map.offsetLeft + 180;
+    const mapLeft = map.clientWidth*2 - map.clientWidth, // 맵의 왼쪽 부분
+          mapRight = map.clientWidth*2.4 - map.clientWidth;  
+          console.log(mapRight,mapLeft)
     setTimeout(() => { // 게임 시작
         setTimeout(() => {  // 첫번째 웨이브
             addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapRight - mapLeft) + mapLeft); // math.random() * (최대값 - 최소값) + 최소값 ) 최대값과 최소값사이를 랜덤으로
             addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapRight - mapLeft) + mapLeft);   // addEnemys(top값,left값);
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapRight - mapLeft) + mapLeft); 
+            addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapRight - mapLeft) + mapLeft); 
             addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapRight - mapLeft) + mapLeft); 
         }, 1000);
     
@@ -326,7 +403,7 @@ function start()    {
         setTimeout(() => {  // 라운드 클리어
             levelUp();  // 스테이지 레벨업 함수 실행
             stopGame(); // 맵 이동 css 중지
-        }, 5000);
+        }, 45000);
     }, 1000);
 }
 
@@ -350,6 +427,12 @@ function stopGame() {   // 스테이지 클리어 게임 클리어가 아님
 
 function startBtn()    {    // 스타트 버튼 클릭
     mapMove.style.animation = "mapMove 5s infinite linear" ;    // 맵을 이동하는 느낌이 하는 CSS
+    for(let firstHp = 1 ; firstHp <= 3 ; firstHp++)   {
+        let addHp = document.createElement("div");
+        addHp.className = "hp";
+        hp.appendChild(addHp);
+        console.log("l");
+    }
     start();    // 게임 스타트
 }
 
