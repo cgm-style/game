@@ -33,7 +33,7 @@ body    {
     background-image: url(img/myCharacter.png);
     background-size: 100%;
 }
-.attactPoint,.enmattactPoint    {
+.attactPoint,.enmattactPoint,.enmEliteattactPoint    {
     width: 10px;
     height:10px;
     border-radius: 100%;
@@ -45,6 +45,9 @@ body    {
 .enmattactPoint     {
     background-image: url(img/enmAttack.png);
 }
+.enmEliteattactPoint     {
+    background-image: url(img/enmEliteAttack.png);
+}
 .enemysAmy  {
     width: 50px;
     height:50px;
@@ -52,6 +55,16 @@ body    {
     position: absolute;
     z-index: 1;
     background-image: url(img/enemyAmy.png);
+    background-size: 100%;
+}
+
+.enemysElite  {
+    width: 50px;
+    height:50px;
+    border-radius: 100%;
+    position: absolute;
+    z-index: 1;
+    background-image: url(img/enemyElite.png);
     background-size: 100%;
 }
 
@@ -108,7 +121,7 @@ button:active   {
 #setHiddenBox   {
     width: fit-content;
     margin: 0 auto;
-    font-size: 1.3vw;
+    font-size: 1vw;
     color: white;
     overflow: hidden;
 }
@@ -123,6 +136,29 @@ button:active   {
     top: 20%;
     width: 30%;
     height: 20vh;
+}
+
+#hp {
+    display: flex;
+    justify-content: center;
+}
+.hp {
+    width: 100px;
+    height: 100px;
+    background: url(img/harte.png);
+    margin: 10px;
+}
+
+#gameOver   {
+    position: fixed;
+    width: 30%;
+    height: 10%;
+    top: 40%;
+    left: 35%;
+    font-size: 3.8vw;
+    font-weight: 700;
+    text-shadow: 4px 4px 0px chocolate;
+    display: none;
 }
 
 @keyframes mapMove  {
