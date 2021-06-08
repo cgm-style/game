@@ -1,6 +1,6 @@
 
-function addEnemys(x,y)   {    // 적 생성
-    const     enemysAmy = document.createElement("div");    // 적 박스 선택
+function addEnemys(x,y,leftOrRight)   {    // 적 생성
+    const enemysAmy = document.createElement("div");    // 적 박스 선택
 
     let levelHpAmy = level / difficulty  * 15;   // 적의 hp 설정
 
@@ -18,10 +18,9 @@ function addEnemys(x,y)   {    // 적 생성
     function enemysMove(x,y)   {    // 적의 움직임 제어값을 받는 함수
         enemysAmy.style.top = `${x}px`  // 적의 생성 top 값
         enemysAmy.style.left = `${y}px` // 적의 생성 left 값
-
-        if(Number(enemysAmy.id) > 0 && Number(enemysAmy.id) <= 5) {  // 생성되는 몬스터 id ~몇번까지는 밑의 이벤트를 하라
-            enemyMoveLeft(enemysAmy)   
-        }else if(Number(enemysAmy.id) >= 6 && Number(enemysAmy.id) <= 10)  {
+        if(leftOrRight === "left")  {
+            enemyMoveLeft(enemysAmy)
+        }else if(leftOrRight === "right")   {
             enemyMoveRight(enemysAmy)   
         }
     }

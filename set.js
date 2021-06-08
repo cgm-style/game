@@ -51,41 +51,50 @@ function start()    {
           marRight = map.clientWidth - map.clientWidth*1.1,
           marRightOfSet = map.clientWidth - map.clientWidth*1.3;
 
-
+function addRandomEliteOrAmy(enmNum)  {
+    for(let addEnm=1; addEnm <= enmNum; addEnm++) {
+        const eliteOnOff = Math.floor(Math.random() * 2);
+        const randomLeftRight = Math.floor(Math.random() * 2);
+        if(eliteOnOff === 0) {
+            if(randomLeftRight === 0)   {
+                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapLeftOfSet - mapLeft) + mapLeft,"left");
+            } else if (randomLeftRight === 1) {
+                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (marRightOfSet - marRight) + marRight,"right");
+            }
+        }else if (eliteOnOff === 1)    {
+            if(randomLeftRight === 0)   {
+                addEliteEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapLeftOfSet - mapLeft) + mapLeft,"left");
+            } else if (randomLeftRight === 1) {
+                addEliteEnemys(Math.random() * (200 - 10) + 10,Math.random() * (marRightOfSet - marRight) + marRight,"right");
+            }
+        }
+    }
+     // math.random() * (최대값 - 최소값) + 최소값 ) 최대값과 최소값사이를 랜덤으로
+}
 
     setTimeout(() => { // 게임 시작
-        if(game === true)   {
+        if(game === true)   {   // 게임 over 여부 체크
             setTimeout(() => {  // 오른쪽에서 나오는 첫번째 웨이브
-                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapLeftOfSet - mapLeft) + mapLeft); // math.random() * (최대값 - 최소값) + 최소값 ) 최대값과 최소값사이를 랜덤으로
-                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapLeftOfSet - mapLeft) + mapLeft);   // addEnemys(top값,left값);
-                addEliteEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapLeftOfSet - mapLeft) + mapLeft); 
-                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapLeftOfSet - mapLeft) + mapLeft); 
-                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (mapLeftOfSet - mapLeft) + mapLeft); 
+                addRandomEliteOrAmy(5); // 랜덤 몹 생성 및 몹 수 설정
             }, 1000);
         }
         if(game === true)   {
             setTimeout(() => {  // 왼쪽에서 나오는 두번째 웨이브
-                addEliteEnemys(Math.random() * (200 - 10) + 10,Math.random() * (marRightOfSet - marRight) + marRight); // math.random() * (최대값 - 최소값) + 최소값 ) 최대값과 최소값사이를 랜덤으로
-                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (marRightOfSet - marRight) + marRight);   // addEnemys(top값,left값);
-                addEliteEnemys(Math.random() * (200 - 10) + 10,Math.random() * (marRightOfSet - marRight) + marRight); 
-                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (marRightOfSet - marRight) + marRight); 
-                addEliteEnemys(Math.random() * (200 - 10) + 10,Math.random() * (marRightOfSet - marRight) + marRight); 
+                addRandomEliteOrAmy(5);
             }, 8000);
         }
 
-        /*if(game === true)   {
+        if(game === true)   {
             setTimeout(() => {  // 세번째 웨이브
-                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (780 - 660) + 660); 
-                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (780 - 660) + 660);
-                addEnemys(Math.random() * (200 - 10) + 10,Math.random() * (780 - 660) + 660); 
+                addRandomEliteOrAmy(5);
             }, 14000);
-        }*/
+        }
 
         if(game === true)   {
             setTimeout(() => {  // 라운드 클리어
                 levelUp();  // 스테이지 레벨업 함수 실행
                 stopGame(); // 맵 이동 css 중지
-            }, 45000);
+            }, 25000);
         }
     }, 1000);
 }
@@ -93,7 +102,10 @@ function start()    {
 function levelUp()  {
     if(game === true)   {
         level = Number(level) + 1;  // 스테이지 클리어 후 스테이지레벨 상승
+        gameOverText.innerText = "Clear Next Level";
+        gameOverText.style.display = "block";
         setTimeout(() => {
+        gameOverText.style.display = "none";
         mapMove.style.animation = "mapMove 5s infinite linear" ;     // 스테이지 클리어 후 멈춘 맵 다시 play
         chack();    // 변경된 레벨에 따른 난이도등 체크
         if(level > 5) { // 지금은 레벨이 5 넘어가면 게임 클리어로 넘어가지만 추후 레벨마다 start 함수를 다르게줘 스테이지 설정 가능
@@ -111,6 +123,7 @@ function stopGame() {   // 스테이지 클리어 게임 클리어가 아님
 
 function gameOver() {   // 게임이 끝남.
     if(game === false)  {
+        gameOverText.innerText = "Game Over";
         mapMove.style.animation = "";
         gameOverText.style.display = "block";
         game = false;
